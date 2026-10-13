@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nimbus-api
+  labels:
+    app: nimbus-api
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: nimbus-api
+
+  template:
+    metadata:
+      labels:
+        app: nimbus-api
+
+    spec:
+      containers:
+        - name: nimbus-api
+          image: nimbus-api:dev
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 3000
+
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 5
